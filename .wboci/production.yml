@@ -1,0 +1,45 @@
+# DEFAULTS
+proxies: &PROXIES
+  http_proxy: http://devproxy.bloomberg.com:82
+  https_proxy: http://devproxy.bloomberg.com:82
+  no_proxy: '.dev.bloomberg.com,.bcpc.bloomberg.com'
+
+# Deployment Configuration
+name: admin-services                                  # Identifier
+environment: prod                                     # Target Environment (Default: [dev|development])
+tenancy: mediasyndication
+pipeline:                                             # Pipeline Configuration
+  id: k8s                                             # Pipeline ID
+  port: 8080                                          # Exposed port
+  healthcheck:                                        # Healthcheck
+    httpGet:
+      path: /monitor/healthcheck
+    initialDelaySeconds: 60
+    periodSeconds: 5
+    timeoutSeconds: 3
+
+  resources:
+    cpu: 0.5
+    memory: 500M
+  stages:                                             # Arbitrary stages
+    install-deps:
+      dockerfile: Dockerfile.build
+      args:
+        <<: *PROXIES
+      parallel:
+        server:
+          dir: .
+          sh:
+            - NODE_TLS_REJECT_UNAUTHORIZED=0 npm install --no-optional
+    transpile:
+      dockerfile: Dockerfile.build
+      parallel:                                        # Parallel stages executed in container
+        server:
+          dir: .
+          sh:
+            - npm run build
+    build:
+      dockerfile: Dockerfile
+      args:
+        <<: *PROXIES
+        version: true
