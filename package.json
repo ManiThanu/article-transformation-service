@@ -1,11 +1,11 @@
 {
-  "name": "asset-service",
+  "name": "article-transformation-service",
   "version": "0.0.1",
   "description": "MSYN Platform Asset Service",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://bbgithub.dev.bloomberg.com/Media-Syndication/asset-service"
+    "url": "https://bbgithub.dev.bloomberg.com/Media-Syndication/article-transformation-service"
   },
   "author": "Bloomberg Media Syndication",
   "license": "UNLICENSED",
